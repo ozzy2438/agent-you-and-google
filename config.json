@@ -1,0 +1,11 @@
+{
+    "youtube": {
+        "api_key": "AIzaSyA93QPBVEaSTX3ERf9wlzI7MYicGgE0IYI"
+    },
+    "search_api": {
+        "api_key": "kvJzFicyg3nM1ByWVPJDs7wA"
+    },
+    "google_custom_search": {
+        "api_key": "AIzaSyCGQFA16pmtFL9ghv-25926_l-r3sVFyM8"
+    }
+} 
