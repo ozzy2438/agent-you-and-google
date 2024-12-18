@@ -7,38 +7,42 @@ from googleapiclient.discovery import build
 from datetime import datetime, timezone
 import isodate
 import os
+from dotenv import load_dotenv
+
+# .env dosyasını yükle
+load_dotenv()
 
 def load_config():
     """
-    API anahtarlarını config.json dosyasından yükler
-    Dosya yoksa varsayılan yapılandırmayı kullanır
+    API anahtarlarını .env dosyasından yükler
     """
-    config_file = 'config.json'
-    if os.path.exists(config_file):
-        with open(config_file, 'r') as f:
-            return json.load(f)
-    else:
-        # Varsayılan yapılandırma
-        default_config = {
-            "youtube": {
-                "api_key": ""  # YouTube API anahtarınız
-            },
-            "search_api": {
-                "api_key": ""  # SearchAPI.io anahtarı
-            }
+    config = {
+        "youtube": {
+            "api_key": os.getenv('YOUTUBE_API_KEY', '')
+        },
+        "search_api": {
+            "api_key": os.getenv('SEARCH_API_KEY', '')
+        },
+        "google_custom_search": {
+            "api_key": os.getenv('GOOGLE_CUSTOM_SEARCH_API_KEY', '')
         }
-        # Config dosyasını oluştur
-        with open(config_file, 'w') as f:
-            json.dump(default_config, f, indent=4)
-        print(f"\nLütfen {config_file} dosyasına API anahtarlarınızı ekleyin.")
-        return default_config
+    }
+    
+    # API anahtarlarını kontrol et
+    missing_keys = [k for k, v in {
+        'YOUTUBE_API_KEY': config['youtube']['api_key'],
+        'SEARCH_API_KEY': config['search_api']['api_key'],
+        'GOOGLE_CUSTOM_SEARCH_API_KEY': config['google_custom_search']['api_key']
+    }.items() if not v]
+    
+    if missing_keys:
+        print(f"\nUYARI: Eksik API anahtarları: {', '.join(missing_keys)}")
+        print("Lütfen .env dosyasını kontrol edin.")
+    
+    return config
 
 # API Yapılandırmasını yükle
 API_CONFIG = load_config()
-
-# API anahtarlarını kontrol et
-if not API_CONFIG['youtube']['api_key'] or not API_CONFIG['search_api']['api_key']:
-    print("\nUYARI: API anahtarları eksik. Lütfen config.json dosyasını düzenleyin.")
 
 def get_video_details(video_id, youtube):
     """
